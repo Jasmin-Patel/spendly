@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python -c \"from flask import Flask; app = Flask\\(__name__\\); print\\(app.root_path\\); print\\(app.instance_path\\)\")",
-      "Bash(python -c \"import os; print\\(os.path.abspath\\('spendly.db'\\)\\); print\\(os.path.dirname\\(os.path.abspath\\('database/db.py'\\)\\)\\)\")"
+      "Bash(python -c \"import os; print\\(os.path.abspath\\('spendly.db'\\)\\); print\\(os.path.dirname\\(os.path.abspath\\('database/db.py'\\)\\)\\)\")",
+      "Bash(Get-Content *)"
     ]
   }
 }
