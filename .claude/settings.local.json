@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python -c \"from flask import Flask; app = Flask\\(__name__\\); print\\(app.root_path\\); print\\(app.instance_path\\)\")",
       "Bash(python -c \"import os; print\\(os.path.abspath\\('spendly.db'\\)\\); print\\(os.path.dirname\\(os.path.abspath\\('database/db.py'\\)\\)\\)\")",
-      "Bash(Get-Content *)"
+      "Bash(Get-Content *)",
+      "PowerShell(venv\\\\Scripts\\\\python.exe -m pytest -v 2>&1)",
+      "PowerShell(venv\\\\Scripts\\\\python.exe -c \"import app; print\\('OK'\\)\" 2>&1)"
     ]
   }
 }
