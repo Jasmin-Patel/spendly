@@ -22,6 +22,8 @@ def landing():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
+        if session.get("user_id"):
+            return redirect(url_for("profile"))
         return render_template("register.html")
 
     name = request.form.get("name", "").strip()
