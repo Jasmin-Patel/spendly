@@ -1,9 +1,21 @@
+import functools
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import get_db, init_db, seed_db, get_user_by_email, create_user
+from database.db import get_db, init_db, seed_db, get_user_by_email, create_user, \
+    get_user_by_id, get_expense_summary
 
 app = Flask(__name__)
 app.secret_key = "spendly-dev-secret"
+
+
+def login_required(f):
+    @functools.wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("user_id"):
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
 
 with app.app_context():
     init_db()
@@ -87,8 +99,19 @@ def logout():
 
 
 @app.route("/profile")
+@login_required
 def profile():
-    return "Profile page — coming in Step 4"
+    user    = get_user_by_id(session["user_id"])
+    summary = get_expense_summary(session["user_id"])
+    member_since = datetime.strptime(
+        user["created_at"], "%Y-%m-%d %H:%M:%S"
+    ).strftime("%#d %B %Y")
+    return render_template(
+        "profile.html",
+        user=user,
+        summary=summary,
+        member_since=member_since,
+    )
 
 
 @app.route("/expenses/add")

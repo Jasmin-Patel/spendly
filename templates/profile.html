@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-container">
+
+        <div class="profile-heading">
+            <h1 class="profile-title">My Profile</h1>
+            <p class="profile-subtitle">Your account details and spending at a glance</p>
+        </div>
+
+        <!-- Account card -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <div class="profile-avatar">
+                    <i data-lucide="user-circle"></i>
+                </div>
+                <div>
+                    <h2 class="profile-name">{{ user["name"] }}</h2>
+                    <p class="profile-email">{{ user["email"] }}</p>
+                </div>
+            </div>
+            <div class="profile-card-body">
+                <div class="profile-field">
+                    <span class="profile-field-label">
+                        <i data-lucide="calendar"></i>
+                        Member since
+                    </span>
+                    <span class="profile-field-value">{{ member_since }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spending snapshot card -->
+        <div class="profile-card">
+            <div class="profile-snapshot-heading">
+                <i data-lucide="bar-chart-2"></i>
+                <h2 class="profile-snapshot-title">Spending Snapshot</h2>
+            </div>
+            <div class="profile-stats-grid">
+                <div class="profile-stat">
+                    <span class="profile-stat-value">{{ summary["total_count"] }}</span>
+                    <span class="profile-stat-label">Total expenses</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="profile-stat-value">₹{{ "%.2f"|format(summary["total_amount"]) }}</span>
+                    <span class="profile-stat-label">Total spent</span>
+                </div>
+                <div class="profile-stat">
+                    {% if summary["top_category"] %}
+                    <span class="profile-stat-badge">{{ summary["top_category"] }}</span>
+                    {% else %}
+                    <span class="profile-stat-empty">—</span>
+                    {% endif %}
+                    <span class="profile-stat-label">Top category</span>
+                </div>
+            </div>
+            {% if not summary["top_category"] %}
+            <p class="profile-no-expenses">
+                <i data-lucide="info"></i>
+                No expenses yet — <a href="{{ url_for('add_expense') }}">add your first one</a>.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="profile-actions">
+            <a href="{{ url_for('add_expense') }}" class="btn-primary">Add expense</a>
+            <a href="{{ url_for('logout') }}" class="btn-ghost">Sign out</a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>lucide.createIcons();</script>
+{% endblock %}
