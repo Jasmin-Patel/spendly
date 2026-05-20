@@ -1,9 +1,11 @@
 import functools
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import get_db, init_db, seed_db, get_user_by_email, create_user, \
-    get_user_by_id, get_expense_summary
+from database.db import get_db, init_db, seed_db, get_user_by_email, create_user
+from database.queries import (
+    get_user_by_id, get_summary_stats,
+    get_recent_transactions, get_category_breakdown,
+)
 
 app = Flask(__name__)
 app.secret_key = "spendly-dev-secret"
@@ -101,16 +103,17 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    user    = get_user_by_id(session["user_id"])
-    summary = get_expense_summary(session["user_id"])
-    member_since = datetime.strptime(
-        user["created_at"], "%Y-%m-%d %H:%M:%S"
-    ).strftime("%#d %B %Y")
+    user_id      = session["user_id"]
+    user         = get_user_by_id(user_id)
+    summary      = get_summary_stats(user_id)
+    transactions = get_recent_transactions(user_id)
+    categories   = get_category_breakdown(user_id)
     return render_template(
         "profile.html",
         user=user,
         summary=summary,
-        member_since=member_since,
+        transactions=transactions,
+        categories=categories,
     )
 
 
