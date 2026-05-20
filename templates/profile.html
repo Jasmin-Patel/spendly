@@ -32,7 +32,7 @@
                         <i data-lucide="calendar"></i>
                         Member since
                     </span>
-                    <span class="profile-field-value">{{ member_since }}</span>
+                    <span class="profile-field-value">{{ user["member_since"] }}</span>
                 </div>
             </div>
         </div>
@@ -45,11 +45,11 @@
             </div>
             <div class="profile-stats-grid">
                 <div class="profile-stat">
-                    <span class="profile-stat-value">{{ summary["total_count"] }}</span>
+                    <span class="profile-stat-value">{{ summary["transaction_count"] }}</span>
                     <span class="profile-stat-label">Total expenses</span>
                 </div>
                 <div class="profile-stat">
-                    <span class="profile-stat-value">₹{{ "%.2f"|format(summary["total_amount"]) }}</span>
+                    <span class="profile-stat-value">₹{{ "%.2f"|format(summary["total_spent"]) }}</span>
                     <span class="profile-stat-label">Total spent</span>
                 </div>
                 <div class="profile-stat">
@@ -68,6 +68,59 @@
             </p>
             {% endif %}
         </div>
+
+        <!-- Recent Transactions card -->
+        <div class="profile-card">
+            <div class="profile-snapshot-heading">
+                <i data-lucide="clock"></i>
+                <h2 class="profile-snapshot-title">Recent Transactions</h2>
+            </div>
+            {% if transactions %}
+            <div class="profile-tx-list">
+                {% for tx in transactions %}
+                <div class="profile-tx-row">
+                    <div class="profile-tx-meta">
+                        <span class="profile-tx-desc">{{ tx["description"] or "—" }}</span>
+                        <span class="profile-tx-date">{{ tx["date"] }}</span>
+                    </div>
+                    <div class="profile-tx-right">
+                        <span class="profile-tx-cat">{{ tx["category"] }}</span>
+                        <span class="profile-tx-amount">₹{{ "%.2f"|format(tx["amount"]) }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="profile-no-expenses">
+                <i data-lucide="info"></i>
+                No transactions yet — <a href="{{ url_for('add_expense') }}">add your first one</a>.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Category Breakdown card -->
+        {% if categories %}
+        <div class="profile-card">
+            <div class="profile-snapshot-heading">
+                <i data-lucide="pie-chart"></i>
+                <h2 class="profile-snapshot-title">Category Breakdown</h2>
+            </div>
+            <div class="profile-cat-list">
+                {% for cat in categories %}
+                <div class="profile-cat-row">
+                    <div class="profile-cat-label-row">
+                        <span class="profile-cat-name">{{ cat["name"] }}</span>
+                        <span class="profile-cat-amount">₹{{ "%.2f"|format(cat["amount"]) }}</span>
+                    </div>
+                    <div class="profile-cat-bar-track">
+                        <div class="profile-cat-bar" style="width: {{ cat['pct'] }}%"></div>
+                    </div>
+                    <span class="profile-cat-pct">{{ cat["pct"] }}%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Actions -->
         <div class="profile-actions">
