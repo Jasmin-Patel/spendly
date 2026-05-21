@@ -289,6 +289,88 @@
 
 .profile-cat-pct { font-size: 0.75rem; color: var(--ink-muted); text-align: right; }
 
+/* Filter bar */
+
+.profile-filter-card {
+    padding: 1.25rem 2rem;
+}
+
+.filter-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+
+.filter-presets {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-preset {
+    display: inline-block;
+    padding: 0.35rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.825rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.filter-preset:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.filter-preset--active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--paper-card);
+}
+
+.filter-preset--active:hover {
+    color: var(--paper-card);
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-date {
+    width: auto;
+    flex: 1;
+    min-width: 130px;
+    max-width: 175px;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.filter-sep {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+}
+
+.filter-apply {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.filter-error {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--danger-light);
+    color: var(--danger);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+}
+
 /* Mobile */
 
 @media (max-width: 768px) {
@@ -310,6 +392,23 @@
 
     .profile-actions .btn-primary,
     .profile-actions .btn-ghost {
+        text-align: center;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-date {
+        max-width: 100%;
+    }
+
+    .filter-sep {
+        display: none;
+    }
+
+    .filter-apply {
         text-align: center;
     }
 }

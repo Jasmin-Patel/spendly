@@ -1,5 +1,8 @@
 import functools
-from flask import Flask, render_template, request, redirect, url_for, session, abort
+import os
+from calendar import monthrange
+from datetime import date, datetime
+from flask import Flask, flash, render_template, request, redirect, url_for, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import get_db, init_db, seed_db, get_user_by_email, create_user
 from database.queries import (
@@ -8,7 +11,7 @@ from database.queries import (
 )
 
 app = Flask(__name__)
-app.secret_key = "spendly-dev-secret"
+app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(32)
 
 
 def login_required(f):
@@ -22,6 +25,53 @@ def login_required(f):
 with app.app_context():
     init_db()
     seed_db()
+
+
+# ------------------------------------------------------------------ #
+# Date-filter helpers                                                 #
+# ------------------------------------------------------------------ #
+
+def _parse_filter_date(val):
+    try:
+        datetime.strptime(val, "%Y-%m-%d")
+        return val
+    except (ValueError, TypeError):
+        return None
+
+
+def _months_ago_str(today, n):
+    m = (today.month - n - 1) % 12 + 1
+    y = today.year + (today.month - n - 1) // 12
+    return date(y, m, min(today.day, monthrange(y, m)[1])).isoformat()
+
+
+def _get_preset_dates():
+    today = date.today()
+    return {
+        "today":        today.isoformat(),
+        "this_month":   today.replace(day=1).isoformat(),
+        "three_months": _months_ago_str(today, 3),
+        "six_months":   _months_ago_str(today, 6),
+    }
+
+
+def _resolve_date_filter(args, presets):
+    date_from = _parse_filter_date(args.get("date_from"))
+    date_to   = _parse_filter_date(args.get("date_to"))
+    if date_from and date_to and date_from > date_to:
+        flash("Start date must be before end date.")
+        date_from = date_to = None
+    if not date_from and not date_to:
+        active_preset = "all_time"
+    elif date_from == presets["this_month"] and date_to == presets["today"]:
+        active_preset = "this_month"
+    elif date_from == presets["three_months"] and date_to == presets["today"]:
+        active_preset = "last_3m"
+    elif date_from == presets["six_months"] and date_to == presets["today"]:
+        active_preset = "last_6m"
+    else:
+        active_preset = "custom"
+    return date_from, date_to, active_preset
 
 
 # ------------------------------------------------------------------ #
@@ -103,17 +153,20 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    user_id      = session["user_id"]
-    user         = get_user_by_id(user_id)
-    summary      = get_summary_stats(user_id)
-    transactions = get_recent_transactions(user_id)
-    categories   = get_category_breakdown(user_id)
+    user_id = session["user_id"]
+    presets = _get_preset_dates()
+    date_from, date_to, active_preset = _resolve_date_filter(request.args, presets)
+
     return render_template(
         "profile.html",
-        user=user,
-        summary=summary,
-        transactions=transactions,
-        categories=categories,
+        user=get_user_by_id(user_id),
+        summary=get_summary_stats(user_id, date_from=date_from, date_to=date_to),
+        transactions=get_recent_transactions(user_id, date_from=date_from, date_to=date_to),
+        categories=get_category_breakdown(user_id, date_from=date_from, date_to=date_to),
+        date_from=date_from,
+        date_to=date_to,
+        active_preset=active_preset,
+        presets=presets,
     )
 
 
@@ -133,4 +186,4 @@ def delete_expense(id):
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1',debug=True, port=5001)
+    app.run(host='127.0.0.1', debug=True, port=5001)
