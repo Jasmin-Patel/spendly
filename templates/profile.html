@@ -37,6 +37,33 @@
             </div>
         </div>
 
+        <!-- Date filter bar -->
+        <div class="profile-card profile-filter-card">
+            <div class="filter-bar">
+                <div class="filter-presets">
+                    <a href="{{ url_for('profile') }}"
+                       class="filter-preset{% if active_preset == 'all_time' %} filter-preset--active{% endif %}">All Time</a>
+                    <a href="{{ url_for('profile', date_from=presets.this_month, date_to=presets.today) }}"
+                       class="filter-preset{% if active_preset == 'this_month' %} filter-preset--active{% endif %}">This Month</a>
+                    <a href="{{ url_for('profile', date_from=presets.three_months, date_to=presets.today) }}"
+                       class="filter-preset{% if active_preset == 'last_3m' %} filter-preset--active{% endif %}">Last 3 Months</a>
+                    <a href="{{ url_for('profile', date_from=presets.six_months, date_to=presets.today) }}"
+                       class="filter-preset{% if active_preset == 'last_6m' %} filter-preset--active{% endif %}">Last 6 Months</a>
+                </div>
+                <form method="get" action="{{ url_for('profile') }}" class="filter-form">
+                    <input type="date" name="date_from" class="form-input filter-date"
+                           value="{{ date_from or '' }}">
+                    <span class="filter-sep">—</span>
+                    <input type="date" name="date_to" class="form-input filter-date"
+                           value="{{ date_to or '' }}">
+                    <button type="submit" class="btn-primary filter-apply">Apply</button>
+                </form>
+            </div>
+            {% for msg in get_flashed_messages() %}
+            <p class="filter-error">{{ msg }}</p>
+            {% endfor %}
+        </div>
+
         <!-- Spending snapshot card -->
         <div class="profile-card">
             <div class="profile-snapshot-heading">

@@ -19,17 +19,31 @@ def get_user_by_id(user_id):
     }
 
 
-def get_summary_stats(user_id):
+def _date_where(user_id, date_from, date_to):
+    conds  = ["user_id = ?"]
+    params = [user_id]
+    if date_from:
+        conds.append("date >= ?")
+        params.append(date_from)
+    if date_to:
+        conds.append("date <= ?")
+        params.append(date_to)
+    return " WHERE " + " AND ".join(conds), params
+
+
+def get_summary_stats(user_id, date_from=None, date_to=None):
     conn = get_db()
+    where, params = _date_where(user_id, date_from, date_to)
+
     row = conn.execute(
         "SELECT COUNT(*) AS cnt, COALESCE(SUM(amount), 0.0) AS total "
-        "FROM expenses WHERE user_id = ?",
-        (user_id,)
+        "FROM expenses" + where,
+        params
     ).fetchone()
     top = conn.execute(
-        "SELECT category FROM expenses WHERE user_id = ? "
-        "GROUP BY category ORDER BY SUM(amount) DESC LIMIT 1",
-        (user_id,)
+        "SELECT category FROM expenses" + where +
+        " GROUP BY category ORDER BY SUM(amount) DESC LIMIT 1",
+        params
     ).fetchone()
     conn.close()
     return {
@@ -39,12 +53,14 @@ def get_summary_stats(user_id):
     }
 
 
-def get_recent_transactions(user_id, limit=10):
+def get_recent_transactions(user_id, limit=10, date_from=None, date_to=None):
     conn = get_db()
+    where, params = _date_where(user_id, date_from, date_to)
+
     rows = conn.execute(
-        "SELECT date, description, category, amount FROM expenses "
-        "WHERE user_id = ? ORDER BY date DESC, id DESC LIMIT ?",
-        (user_id, limit)
+        "SELECT date, description, category, amount FROM expenses"
+        + where + " ORDER BY date DESC, id DESC LIMIT ?",
+        params + [limit]
     ).fetchall()
     conn.close()
     return [
@@ -58,12 +74,14 @@ def get_recent_transactions(user_id, limit=10):
     ]
 
 
-def get_category_breakdown(user_id):
+def get_category_breakdown(user_id, date_from=None, date_to=None):
     conn = get_db()
+    where, params = _date_where(user_id, date_from, date_to)
+
     rows = conn.execute(
-        "SELECT category AS name, SUM(amount) AS amount FROM expenses "
-        "WHERE user_id = ? GROUP BY category ORDER BY SUM(amount) DESC",
-        (user_id,)
+        "SELECT category AS name, SUM(amount) AS amount FROM expenses"
+        + where + " GROUP BY category ORDER BY SUM(amount) DESC",
+        params
     ).fetchall()
     conn.close()
     if not rows:
