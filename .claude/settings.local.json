@@ -11,7 +11,9 @@
       "PowerShell(Start-Process -FilePath \"venv\\\\Scripts\\\\python.exe\" -ArgumentList \"app.py\" -RedirectStandardOutput \"flask_out.txt\" -RedirectStandardError \"flask_err.txt\" -NoNewWindow)",
       "PowerShell(Start-Sleep -Seconds 3; try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:5001/\" -UseBasicParsing; $r.StatusCode } catch { $_.Exception.Message })",
       "Bash(venv/Scripts/python.exe *)",
-      "PowerShell(Stop-Process *)"
+      "PowerShell(Stop-Process *)",
+      "PowerShell(Out-Null *)",
+      "Bash(venv\\\\Scripts\\\\python.exe -m pytest tests/test_07-add-expense.py -v)"
     ]
   },
   "enabledMcpjsonServers": [
