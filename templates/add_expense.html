@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Add Expense — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/add_expense.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="auth-section">
+    <div class="add-expense-container">
+
+        <div class="auth-header">
+            <h1 class="auth-title">Add an expense</h1>
+            <p class="auth-subtitle">Record a new transaction</p>
+        </div>
+
+        <div class="auth-card">
+            {% if error %}
+            <div class="auth-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('add_expense') }}">
+                <div class="form-group">
+                    <label for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" name="amount"
+                           class="form-input" placeholder="0.00"
+                           step="0.01" min="0.01"
+                           value="{{ form_data.amount if form_data }}"
+                           required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" class="form-input" required>
+                        <option value="" disabled {% if not form_data %}selected{% endif %}>Select a category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}"
+                            {% if form_data and form_data.category == cat %}selected{% endif %}>
+                            {{ cat }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date"
+                           class="form-input"
+                           value="{{ form_data.date if form_data else today }}"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description <span class="field-optional">(optional)</span></label>
+                    <input type="text" id="description" name="description"
+                           class="form-input" placeholder="e.g. Lunch at cafe"
+                           value="{{ form_data.description if form_data }}">
+                </div>
+                <button type="submit" class="btn-submit">Save expense</button>
+            </form>
+        </div>
+
+        <p class="auth-switch">
+            <a href="{{ url_for('profile') }}">← Back to profile</a>
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}
