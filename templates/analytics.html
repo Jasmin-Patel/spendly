@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="analytics-page">
+    <div class="analytics-hero">
+
+        <div class="analytics-icon-wrap">
+            <i data-lucide="bar-chart-3"></i>
+        </div>
+
+        <h1 class="analytics-title">Advanced Analytics</h1>
+
+        <div class="analytics-coming-soon">
+            <i data-lucide="clock"></i>
+            <span>Coming Soon</span>
+        </div>
+
+        <p class="analytics-desc">
+            Unlock powerful insights with our next-generation analytics platform.
+            Get ready to transform your spending data into actionable intelligence.
+        </p>
+
+        <div class="analytics-features">
+            <div class="analytics-feature">
+                <i data-lucide="sparkles"></i>
+                <span>Real-time Dashboards</span>
+            </div>
+            <div class="analytics-feature">
+                <i data-lucide="sparkles"></i>
+                <span>Custom Reports</span>
+            </div>
+            <div class="analytics-feature">
+                <i data-lucide="sparkles"></i>
+                <span>Predictive Insights</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>lucide.createIcons();</script>
+{% endblock %}

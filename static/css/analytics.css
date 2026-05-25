@@ -1,0 +1,88 @@
+/* ------------------------------------------------------------------ */
+/* Analytics — Coming Soon page                                         */
+/* ------------------------------------------------------------------ */
+
+.analytics-page {
+    min-height: calc(100vh - 60px - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper-warm);
+    padding: 3rem 1rem;
+}
+
+.analytics-hero {
+    text-align: center;
+    max-width: 640px;
+}
+
+.analytics-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    margin-bottom: 1.75rem;
+}
+
+.analytics-icon-wrap svg {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1.5;
+}
+
+.analytics-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    color: var(--ink);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.analytics-coming-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ink-muted);
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 1.75rem;
+}
+
+.analytics-coming-soon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.analytics-desc {
+    font-size: 1.05rem;
+    color: var(--ink-muted);
+    line-height: 1.75;
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+}
+
+.analytics-features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.analytics-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--ink-faint);
+}
+
+.analytics-feature svg {
+    width: 15px;
+    height: 15px;
+    color: var(--accent);
+    flex-shrink: 0;
+}
