@@ -9,3 +9,5 @@ __pycache__/
 .claude/plans/
 flask_out.txt
 flask_err.txt
+mcp_out.txt
+mcp_err.txt
