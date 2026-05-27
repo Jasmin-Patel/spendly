@@ -21,6 +21,8 @@ from database.db import (
     get_user_by_email,
     create_user,
     create_expense,
+    get_expense_by_id,
+    update_expense,
 )
 from database.queries import (
     get_user_by_id,
@@ -272,9 +274,57 @@ def add_expense():
     return redirect(url_for("profile"))
 
 
-@app.route("/expenses/<int:id>/edit")
-def edit_expense(id):
-    return "Edit expense — coming in Step 8"
+@app.route("/expenses/<int:expense_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_expense(expense_id):
+    expense = get_expense_by_id(expense_id)
+    if expense is None:
+        abort(404)
+    if expense["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "GET":
+        return render_template(
+            "edit_expense.html",
+            expense=expense,
+            categories=EXPENSE_CATEGORIES,
+            selected_category=expense["category"],
+        )
+
+    amount_raw = request.form.get("amount", "").strip()
+    category = request.form.get("category", "")
+    expense_date = request.form.get("date", "").strip()
+    description = request.form.get("description", "").strip() or None
+
+    def rerender(error):
+        return render_template(
+            "edit_expense.html",
+            error=error,
+            expense=expense,
+            categories=EXPENSE_CATEGORIES,
+            selected_category=request.form.get("category", ""),
+            form_data=request.form,
+        )
+
+    try:
+        amount = float(amount_raw)
+        if amount <= 0 or not math.isfinite(amount):
+            raise ValueError
+    except ValueError:
+        return rerender("Amount must be a positive number.")
+
+    if category not in EXPENSE_CATEGORIES:
+        return rerender("Please select a valid category.")
+
+    try:
+        parsed = datetime.strptime(expense_date, "%Y-%m-%d")
+        if parsed.strftime("%Y-%m-%d") != expense_date:
+            raise ValueError
+    except ValueError:
+        return rerender("Please enter a valid date.")
+
+    update_expense(expense_id, session["user_id"], amount, category, expense_date, description)
+    return redirect(url_for("profile"))
 
 
 @app.route("/expenses/<int:id>/delete")

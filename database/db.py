@@ -105,6 +105,27 @@ def get_user_by_id(user_id):
     return user
 
 
+def get_expense_by_id(expense_id):
+    conn = get_db()
+    expense = conn.execute(
+        "SELECT id, user_id, amount, category, date, description FROM expenses WHERE id = ?",
+        (expense_id,),
+    ).fetchone()
+    conn.close()
+    return expense
+
+
+def update_expense(expense_id, user_id, amount, category, expense_date, description):
+    conn = get_db()
+    cursor = conn.execute(
+        "UPDATE expenses SET amount=?, category=?, date=?, description=? WHERE id=? AND user_id=?",
+        (amount, category, expense_date, description, expense_id, user_id),
+    )
+    conn.commit()
+    conn.close()
+    return cursor.rowcount == 1
+
+
 def get_expense_summary(user_id):
     conn = get_db()
 
