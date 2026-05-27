@@ -259,6 +259,15 @@
 
 .profile-tx-amount { font-size: 0.9rem; font-weight: 600; color: var(--ink); }
 
+.profile-tx-edit {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.profile-tx-edit:hover { color: var(--accent); }
+
 /* Category breakdown bars */
 
 .profile-cat-list { display: flex; flex-direction: column; gap: 1rem; }
