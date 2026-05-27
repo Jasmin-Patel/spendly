@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/d/AI/expense-tracker/venv/Scripts/python.exe -c \"\nimport sys, json, subprocess\ndata = json.load(sys.stdin)\nfile = data.get('tool_input', {}).get('file_path', '')\nif file.endswith('.py'):\n    subprocess.run(['/d/AI/expense-tracker/venv/Scripts/python.exe', '-m', 'black', '--quiet', file])\n\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/d/AI/expense-tracker/venv/Scripts/python.exe /d/AI/expense-tracker/.claude/hooks/protect_files.py"
+          }
+        ]
+      }
+    ]
+  }
+}

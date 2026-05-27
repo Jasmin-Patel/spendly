@@ -3,18 +3,44 @@ import math
 import os
 from calendar import monthrange
 from datetime import date, datetime
-from flask import Flask, flash, render_template, request, redirect, url_for, session, abort
+from flask import (
+    Flask,
+    flash,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    abort,
+)
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import get_db, init_db, seed_db, get_user_by_email, create_user, create_expense
+from database.db import (
+    get_db,
+    init_db,
+    seed_db,
+    get_user_by_email,
+    create_user,
+    create_expense,
+)
 from database.queries import (
-    get_user_by_id, get_summary_stats,
-    get_recent_transactions, get_category_breakdown,
+    get_user_by_id,
+    get_summary_stats,
+    get_recent_transactions,
+    get_category_breakdown,
 )
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(32)
 
-EXPENSE_CATEGORIES = ["Food", "Transport", "Bills", "Health", "Entertainment", "Shopping", "Other"]
+EXPENSE_CATEGORIES = [
+    "Food",
+    "Transport",
+    "Bills",
+    "Health",
+    "Entertainment",
+    "Shopping",
+    "Other",
+]
 
 
 def login_required(f):
@@ -23,7 +49,9 @@ def login_required(f):
         if not session.get("user_id"):
             return redirect(url_for("login"))
         return f(*args, **kwargs)
+
     return decorated
+
 
 with app.app_context():
     init_db()
@@ -33,6 +61,7 @@ with app.app_context():
 # ------------------------------------------------------------------ #
 # Date-filter helpers                                                 #
 # ------------------------------------------------------------------ #
+
 
 def _parse_filter_date(val):
     try:
@@ -51,16 +80,16 @@ def _months_ago_str(today, n):
 def _get_preset_dates():
     today = date.today()
     return {
-        "today":        today.isoformat(),
-        "this_month":   today.replace(day=1).isoformat(),
+        "today": today.isoformat(),
+        "this_month": today.replace(day=1).isoformat(),
         "three_months": _months_ago_str(today, 3),
-        "six_months":   _months_ago_str(today, 6),
+        "six_months": _months_ago_str(today, 6),
     }
 
 
 def _resolve_date_filter(args, presets):
     date_from = _parse_filter_date(args.get("date_from"))
-    date_to   = _parse_filter_date(args.get("date_to"))
+    date_to = _parse_filter_date(args.get("date_to"))
     if date_from and date_to and date_from > date_to:
         flash("Start date must be before end date.")
         date_from = date_to = None
@@ -80,6 +109,7 @@ def _resolve_date_filter(args, presets):
 # ------------------------------------------------------------------ #
 # Routes                                                              #
 # ------------------------------------------------------------------ #
+
 
 @app.route("/")
 def landing():
@@ -101,11 +131,15 @@ def register():
     if not all([name, email, password, confirm]):
         return render_template("register.html", error="All fields are required.")
     if len(password) < 8:
-        return render_template("register.html", error="Password must be at least 8 characters.")
+        return render_template(
+            "register.html", error="Password must be at least 8 characters."
+        )
     if password != confirm:
         return render_template("register.html", error="Passwords do not match.")
     if get_user_by_email(email):
-        return render_template("register.html", error="An account with that email already exists.")
+        return render_template(
+            "register.html", error="An account with that email already exists."
+        )
 
     create_user(name, email, generate_password_hash(password))
     return redirect(url_for("login"))
@@ -147,6 +181,7 @@ def privacy():
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
 
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -164,8 +199,12 @@ def profile():
         "profile.html",
         user=get_user_by_id(user_id),
         summary=get_summary_stats(user_id, date_from=date_from, date_to=date_to),
-        transactions=get_recent_transactions(user_id, date_from=date_from, date_to=date_to),
-        categories=get_category_breakdown(user_id, date_from=date_from, date_to=date_to),
+        transactions=get_recent_transactions(
+            user_id, date_from=date_from, date_to=date_to
+        ),
+        categories=get_category_breakdown(
+            user_id, date_from=date_from, date_to=date_to
+        ),
         date_from=date_from,
         date_to=date_to,
         active_preset=active_preset,
@@ -244,4 +283,4 @@ def delete_expense(id):
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', debug=True, port=5001)
+    app.run(host="127.0.0.1", debug=True, port=5001)
