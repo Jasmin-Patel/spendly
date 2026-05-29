@@ -58,6 +58,13 @@
             </form>
         </div>
 
+        <form method="POST"
+              action="{{ url_for('delete_expense', expense_id=expense.id) }}"
+              class="delete-form"
+              onsubmit="return confirm('Delete this expense?')">
+            <button type="submit" class="btn-danger">Delete expense</button>
+        </form>
+
         <p class="auth-switch">
             <a href="{{ url_for('profile') }}">← Back to profile</a>
         </p>
