@@ -23,6 +23,7 @@ from database.db import (
     create_expense,
     get_expense_by_id,
     update_expense,
+    remove_expense,
 )
 from database.queries import (
     get_user_by_id,
@@ -327,9 +328,16 @@ def edit_expense(expense_id):
     return redirect(url_for("profile"))
 
 
-@app.route("/expenses/<int:id>/delete")
-def delete_expense(id):
-    return "Delete expense — coming in Step 9"
+@app.route("/expenses/<int:expense_id>/delete", methods=["POST"])
+@login_required
+def delete_expense(expense_id):
+    expense = get_expense_by_id(expense_id)
+    if expense is None:
+        abort(404)
+    if expense["user_id"] != session["user_id"]:
+        abort(403)
+    remove_expense(expense_id, session["user_id"])
+    return redirect(url_for("profile"))
 
 
 if __name__ == "__main__":

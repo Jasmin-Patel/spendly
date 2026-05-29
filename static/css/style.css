@@ -472,6 +472,27 @@ a { color: inherit; text-decoration: none; }
 
 .btn-submit:hover { background: var(--accent); }
 
+.delete-form { margin-top: 0.75rem; }
+
+.btn-danger {
+    width: 100%;
+    padding: 0.7rem;
+    background: none;
+    color: var(--error, #c0392b);
+    border: 1px solid var(--error, #c0392b);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-danger:hover {
+    background: var(--error, #c0392b);
+    color: #fff;
+}
+
 .auth-switch {
     text-align: center;
     font-size: 0.875rem;
